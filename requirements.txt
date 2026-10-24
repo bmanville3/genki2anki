@@ -1,0 +1,8 @@
+pymupdf
+numpy
+requests
+pyyaml
+pykakasi
+faster-whisper
+pytest
+playwright

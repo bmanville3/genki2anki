@@ -1,0 +1,46 @@
+# genki2anki config - every key is optional; values shown are the defaults.
+work_dir: work            # ALL saved state lives here (safe to stop/restart any time)
+pdf: null                 # path to the scanned Genki PDF
+audio_dir: null           # folder with the Genki audio files (any depth, mp3/m4a/wav/...)
+out_dir: genki_export     # vocab.csv, grammar.csv, pages/, audio/, jisho/
+pages: null               # e.g. "12-380"; null = every page
+skip_kinds: [exercise, index, front_matter]
+
+vlm:
+  base_url: http://localhost:8000/v1
+  model: Qwen/Qwen3-VL-32B-Instruct     # must match the name vLLM serves (any vision model <=35B)
+  workers: 16             # concurrent page requests (vLLM batches them)
+  dpi: 170
+  structured_output: json_schema        # json_schema | guided_json | none
+
+asr:
+  model: large-v3         # or a local CTranslate2 dir, e.g. a Japanese-tuned whisper
+  device: cuda
+  compute_type: float16
+  chunk_s: 600            # transcribe in ~10 min chunks; each chunk is checkpointed
+
+align:
+  monotone_lessons: true  # audio follows book order
+  min_similarity: 0.72    # lower = more matches, more wrong clips
+  recover_similarity: 0.85
+  confident_similarity: 0.85   # clips below this are flagged needs_audio_check
+  align_examples: false   # try to find grammar sentences in the audio too
+  require_tight: false    # true = only keep clips whose edges sit in real silence
+
+tts:
+  backend: none           # none | voicevox | command
+  voicevox_url: http://127.0.0.1:50021
+  voicevox_speaker: 3
+  command: ""             # e.g. "my_tts --text {text} --out {out}"
+  vocab: true             # fill vocab words with no real audio
+  grammar: true           # audio for grammar example sentences
+
+jisho:
+  enabled: true           # verify/complete every vocab word on jisho.org
+  screenshots: true       # needs: pip install playwright && playwright install chromium
+  delay_s: 1.2            # minimum seconds between requests - please keep this polite
+  chromium_path: null     # optional explicit chromium/chrome executable
+
+normalize:
+  enabled: true           # rewrite example sentences in standard orthography (checked by reading)
+  workers: 16
